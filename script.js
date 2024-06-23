@@ -1,35 +1,32 @@
-const timeSlots = document.querySelectorAll('.time-slot');
-let selectedSlot = null;
+let score = 0;
+let highScore = 0;
 
-timeSlots.forEach(slot => {
-  slot.addEventListener('mousedown', handleMouseDown);
-  slot.addEventListener('mousemove', handleMouseMove);
-  slot.addEventListener('mouseup', handleMouseUp);
+document.getElementById('doodle').addEventListener('click', () => {
+    score++;
+    document.getElementById('score').innerText = score;
+    if (score > highScore) {
+        highScore = score;
+        document.getElementById('high-score').innerText = highScore;
+    }
 });
 
-function handleMouseDown(e) {
-  if (e.button === 0) { // Левая кнопка мыши
-    selectedSlot = e.target;
-    selectedSlot.classList.add('selected');
-  }
+const doodle = document.getElementById('doodle');
+let jumpHeight = 100;
+let isJumping = false;
+
+function jump() {
+    if (!isJumping) {
+        isJumping = true;
+        let jumpInterval = setInterval(() => {
+            if (doodle.style.bottom === `${jumpHeight}px`) {
+                clearInterval(jumpInterval);
+                isJumping = false;
+                doodle.style.bottom = '0px';
+            } else {
+                doodle.style.bottom = `${parseInt(doodle.style.bottom) + 10}px`;
+            }
+        }, 50);
+    }
 }
 
-function handleMouseMove(e) {
-  if (selectedSlot) {
-    const slotRect = selectedSlot.getBoundingClientRect();
-    const offsetX = e.clientX - slotRect.left;
-    const offsetY = e.clientY - slotRect.top;
-
-    selectedSlot.style.left = `${e.clientX - offsetX}px`;
-    selectedSlot.style.top = `${e.clientY - offsetY}px`;
-  }
-}
-
-function handleMouseUp(e) {
-  if (selectedSlot) {
-    selectedSlot.classList.remove('selected');
-    selectedSlot.style.left = '';
-    selectedSlot.style.top = '';
-    selectedSlot = null;
-  }
-}
+setInterval(jump, 1000);
